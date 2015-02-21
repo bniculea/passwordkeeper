@@ -1,0 +1,41 @@
+﻿<Page
+    x:Class="CompletePasswordManager.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CompletePasswordManager"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Button x:Name="btnSaveNew"
+                Content="Save new"
+                HorizontalAlignment="Left"
+                Margin="97,108,0,0"
+                VerticalAlignment="Top"
+                Width="215"
+                Click="btnSaveNew_Click"/>
+        
+        <Button x:Name="btnViewAll"
+                Content="View All"
+                HorizontalAlignment="Left" 
+                Margin="97,167,0,0"
+                VerticalAlignment="Top" 
+                Width="215"
+                Click="btnViewAll_Click"/>
+        
+        <Button Content="Button" 
+                HorizontalAlignment="Left"
+                Margin="97,223,0,0"
+                VerticalAlignment="Top" 
+                Width="215"/>
+        
+        <Button Content="Button" 
+                HorizontalAlignment="Left" 
+                Margin="97,280,0,0" 
+                VerticalAlignment="Top" 
+                Width="215"/>
+
+    </Grid>
+</Page>
