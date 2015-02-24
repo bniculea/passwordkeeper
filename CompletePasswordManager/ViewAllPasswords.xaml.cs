@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Graphics.Display;
+using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,23 +32,64 @@ namespace CompletePasswordManager
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-
+        private List<GroupInfoList<object>> dataLetter = null;
         public ViewAllPasswords()
         {
             this.InitializeComponent();
-            //this.lvAllSavedPassword.ItemsSource = CreateEntries();
             EntryRepository entryRepository = new EntryRepository();
             AddEntryToRepository(entryRepository.Collection);
-            List<GroupInfoList<object>> dataLetter = entryRepository.GetGroupsByLetter();
+            dataLetter = entryRepository.GetGroupsByLetter;
             cvs.Source = dataLetter;
+
+            this.lvZoomedInPasswords.SelectionChanged -= lvZoomedIn_SelectionChanged;
+            this.lvZoomedInPasswords.SelectedItem = null;
+
+            (this.semanticZoom.ZoomedOutView as ListViewBase).ItemsSource = entryRepository.PasswordHeaders;
+            this.lvZoomedInPasswords.SelectionChanged += lvZoomedIn_SelectionChanged;
+
+            this.semanticZoom.ViewChangeStarted -= semanticZoom_ViewChangeStarted;
+            this.semanticZoom.ViewChangeStarted += semanticZoom_ViewChangeStarted;
+
+
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
 
+        private void semanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+        {
+            if (e.SourceItem == null || e.SourceItem.Item == null) return;
+
+            if (e.SourceItem.Item.GetType() == typeof(HeaderItem))
+            {
+                HeaderItem headerItem = (HeaderItem)e.SourceItem.Item;
+
+                var group = dataLetter.Find(d => ((char)d.Key) == headerItem.HeaderName);
+                if (group != null)
+                {
+                    e.DestinationItem = new SemanticZoomLocation() { Item = group };
+                }
+             }
+        }
+        private async  void lvZoomedIn_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           //if (this.lvZoomedInPasswords.SelectedItem != null)
+           //{
+           //    Entry entry = this.lvZoomedInPasswords.SelectedItem as Entry;
+           //    MessageDialog md = new MessageDialog(String.Format("You selected: {0} with Psw {1}", entry.HeaderName, entry.Password));
+
+           //    await md.ShowAsync();
+           //    this.lvZoomedInPasswords.SelectedItem = null;
+           //}
+        }
+
         private void AddEntryToRepository(ObservableCollection<Entry> observableCollection)
         {
+            observableCollection.Add(new Entry { Name = "9GAG", Password = "34234234234sdsdf" });
+            observableCollection.Add(new Entry { Name = "500PX", Password = "34234234234sdsdf" });
             observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
+            observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
+            observableCollection.Add(new Entry { Name = "facebook", Password = "34234234234sdsdf" });
             observableCollection.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
             observableCollection.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
             observableCollection.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
@@ -103,6 +145,11 @@ namespace CompletePasswordManager
             entries.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
             entries.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
             return entries;
+        }
+
+        private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            this.semanticZoom.IsZoomedInViewActive = false;
         }
 
         /// <summary>
