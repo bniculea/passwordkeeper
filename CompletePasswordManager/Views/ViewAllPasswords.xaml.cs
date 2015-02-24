@@ -38,6 +38,7 @@ namespace CompletePasswordManager
             this.InitializeComponent();
             EntryRepository entryRepository = new EntryRepository();
             AddEntryToRepository(entryRepository.Collection);
+
             dataLetter = entryRepository.GetGroupsByLetter;
             cvs.Source = dataLetter;
 
