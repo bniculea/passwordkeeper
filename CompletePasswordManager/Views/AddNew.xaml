@@ -7,6 +7,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton x:Name="appBarBtnAdd"
+                          Icon="Add"
+                          Label="appbarbutton" Click="appBarBtnAdd_Click"
+                          />
+        </CommandBar>
+    </Page.BottomAppBar>
 
     <Grid x:Name="LayoutRoot">
 
@@ -32,36 +40,56 @@
 
         <!--TODO: Content should be placed within the following grid-->
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="28,9.833,10,0">
-            <TextBlock HorizontalAlignment="Left"
-                       Margin="11,47,0,0"
-                       TextWrapping="Wrap"
-                       Text="Account"
-                       VerticalAlignment="Top"
-                       Height="30"
-                       Width="74"
-                       FontSize="20"/>
-            <TextBox HorizontalAlignment="Left"
-                     Margin="108,41,0,0"
-                     TextWrapping="Wrap"
-                     Text="TextBox"
-                     VerticalAlignment="Top"
-                     Width="226"/>
+            <StackPanel Orientation="Vertical">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="25*"/>
+                        <ColumnDefinition Width="75*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="50*" />
+                    </Grid.RowDefinitions>
 
-            <TextBlock HorizontalAlignment="Left"
-                       Margin="11,116,0,0"
-                       TextWrapping="Wrap"
-                       Text="Password" 
-                       VerticalAlignment="Top"
-                       Height="30"
-                       Width="91"
-                       FontSize="20"
+                    <TextBlock 
+                           Grid.Row="0"
+                           Grid.Column="0"
+                           HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           Text="Account"
+                           VerticalAlignment="Top"
+                           Height="30"
+                           Width="74"
+                           FontSize="20" Margin="0,8,0,0"/>
+                    <TextBox x:Name="txtName"
+                             HorizontalAlignment="Center"
+                             Grid.Row="0"
+                             Grid.Column="1"
+                             TextWrapping="Wrap"
+                             VerticalAlignment="Top"
+                             Width="226"/>
+
+                    <TextBlock HorizontalAlignment="Left"
+                               TextWrapping="Wrap"
+                               Text="Password" 
+                               VerticalAlignment="Top"
+                               Height="30"
+                               Width="91"
+                               FontSize="20" Grid.ColumnSpan="2" Margin="0,98,0,0"
                        />
-            <TextBox HorizontalAlignment="Left"
-                     Margin="108,116,0,0"
-                     TextWrapping="Wrap"
-                     Text="TextBox" 
-                     Width="226"
-                     VerticalAlignment="Top"/>
+                    <TextBox x:Name="txtPassword"
+                             HorizontalAlignment="Center"
+                             Grid.Row="0"
+                             Grid.Column="1"
+                             TextWrapping="Wrap"
+                             Width="226"
+                             VerticalAlignment="Bottom"
+                            />
+
+                </Grid>
+                
+            </StackPanel>
 
         </Grid>
     </Grid>

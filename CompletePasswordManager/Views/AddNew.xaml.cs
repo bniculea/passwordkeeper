@@ -1,20 +1,10 @@
 ﻿using CompletePasswordManager.Common;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
-using Windows.UI.ViewManagement;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using CompletePasswordManager.DataModel;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
@@ -107,5 +97,22 @@ namespace CompletePasswordManager
         }
 
         #endregion
+
+        private async void appBarBtnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            string name = this.txtName.Text;
+            string password = this.txtPassword.Text;
+            if (string.IsNullOrEmpty(name.Trim()) || string.IsNullOrEmpty(password.Trim()))
+            {
+                MessageDialog messageDialog = new MessageDialog("Name and Password are mandatory", "Input error");
+                messageDialog.ShowAsync();
+            }
+            else
+            {
+                Entry entry = new Entry() {Name = name, Password = password}; 
+            }
+            
+        }
+
     }
 }
