@@ -9,8 +9,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.Background>
+            <ImageBrush x:Name="backgroundGrid"
+                        ImageSource="/Assets/backgrounds/background.jpg" />
+        </Grid.Background>
         <Button x:Name="btnSaveNew"
-                Content="Save new"
+                Content="Add new"
                 HorizontalAlignment="Left"
                 Margin="97,108,0,0"
                 VerticalAlignment="Top"

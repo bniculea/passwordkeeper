@@ -15,7 +15,10 @@
                 <EntranceThemeTransition/>
             </TransitionCollection>
         </Grid.ChildrenTransitions>
-
+        <Grid.Background>
+            <ImageBrush x:Name="backgroundGridinner"
+                        ImageSource="/Assets/backgrounds/background.jpg" />
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -23,12 +26,42 @@
 
         <!-- Title Panel -->
         <StackPanel Grid.Row="0" Margin="19,0,0,0">
-            <TextBlock Text="MY APPLICATION" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
-            <TextBlock Text="page title" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+            <TextBlock Text="{StaticResource AppName}" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
+            <TextBlock Text="add new" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
         </StackPanel>
 
         <!--TODO: Content should be placed within the following grid-->
-        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
+        <Grid Grid.Row="1" x:Name="ContentRoot" Margin="28,9.833,10,0">
+            <TextBlock HorizontalAlignment="Left"
+                       Margin="11,47,0,0"
+                       TextWrapping="Wrap"
+                       Text="Account"
+                       VerticalAlignment="Top"
+                       Height="30"
+                       Width="74"
+                       FontSize="20"/>
+            <TextBox HorizontalAlignment="Left"
+                     Margin="108,41,0,0"
+                     TextWrapping="Wrap"
+                     Text="TextBox"
+                     VerticalAlignment="Top"
+                     Width="226"/>
+
+            <TextBlock HorizontalAlignment="Left"
+                       Margin="11,116,0,0"
+                       TextWrapping="Wrap"
+                       Text="Password" 
+                       VerticalAlignment="Top"
+                       Height="30"
+                       Width="91"
+                       FontSize="20"
+                       />
+            <TextBox HorizontalAlignment="Left"
+                     Margin="108,116,0,0"
+                     TextWrapping="Wrap"
+                     Text="TextBox" 
+                     Width="226"
+                     VerticalAlignment="Top"/>
 
         </Grid>
     </Grid>

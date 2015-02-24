@@ -47,7 +47,7 @@ namespace CompletePasswordManager
 
         private void btnSaveNew_Click(object sender, RoutedEventArgs e)
         {
-
+            Frame.Navigate(typeof(AddNew));
         }
 
         private void btnViewAll_Click(object sender, RoutedEventArgs e)

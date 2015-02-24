@@ -73,14 +73,14 @@ namespace CompletePasswordManager
         }
         private async  void lvZoomedIn_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           //if (this.lvZoomedInPasswords.SelectedItem != null)
-           //{
-           //    Entry entry = this.lvZoomedInPasswords.SelectedItem as Entry;
-           //    MessageDialog md = new MessageDialog(String.Format("You selected: {0} with Psw {1}", entry.HeaderName, entry.Password));
+            if (this.lvZoomedInPasswords.SelectedItem != null)
+            {
+                Entry entry = this.lvZoomedInPasswords.SelectedItem as Entry;
+                MessageDialog md = new MessageDialog(String.Format("You selected: {0} with Psw {1}", entry.Name, entry.Password));
 
-           //    await md.ShowAsync();
-           //    this.lvZoomedInPasswords.SelectedItem = null;
-           //}
+                await md.ShowAsync();
+                this.lvZoomedInPasswords.SelectedItem = null;
+            }
         }
 
         private void AddEntryToRepository(ObservableCollection<Entry> observableCollection)
