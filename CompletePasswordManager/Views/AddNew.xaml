@@ -10,9 +10,12 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton x:Name="appBarBtnAdd"
-                          Icon="Add"
                           Label="appbarbutton" Click="appBarBtnAdd_Click"
-                          />
+                          >
+                <AppBarButton.Icon>
+                    <BitmapIcon UriSource="ms-appx:///Toolkit.Content/ApplicationBar.Check.png"></BitmapIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
         </CommandBar>
     </Page.BottomAppBar>
 

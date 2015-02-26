@@ -105,11 +105,14 @@ namespace CompletePasswordManager
             if (string.IsNullOrEmpty(name.Trim()) || string.IsNullOrEmpty(password.Trim()))
             {
                 MessageDialog messageDialog = new MessageDialog("Name and Password are mandatory", "Input error");
-                messageDialog.ShowAsync();
+                await messageDialog.ShowAsync();
             }
             else
             {
-                Entry entry = new Entry() {Name = name, Password = password}; 
+                Entry entry = new Entry() {Name = name, Password = password};
+                await App._connection.InsertAsync(entry);
+                this.txtName.Text = String.Empty;
+                this.txtPassword.Text = String.Empty;
             }
             
         }

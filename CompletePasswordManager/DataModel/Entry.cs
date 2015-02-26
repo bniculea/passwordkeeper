@@ -9,7 +9,9 @@ namespace CompletePasswordManager.DataModel
 {
     public class Entry
     {
-        [PrimaryKey, AutoIncrement, Column("Name")]
+        [PrimaryKey, AutoIncrement, Column("Id")]
+        public int Id { get; set; }
+        [Column("Name")]
         public String Name { get; set; }
         [Column("Password")]
         public String Password { get; set; }

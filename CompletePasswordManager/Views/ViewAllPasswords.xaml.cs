@@ -1,29 +1,21 @@
-﻿using CompletePasswordManager.Common;
-using CompletePasswordManager.DataModel;
-using CompletePasswordManager.DataSource;
-using CompletePasswordManager.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Graphics.Display;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using CompletePasswordManager.Common;
+using CompletePasswordManager.DataModel;
+using CompletePasswordManager.DataSource;
+using CompletePasswordManager.Repository;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace CompletePasswordManager
+namespace CompletePasswordManager.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -33,29 +25,31 @@ namespace CompletePasswordManager
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
         private List<GroupInfoList<object>> dataLetter = null;
+        private EntryRepository entryRepository;
+        private ListViewBase listViewBase;
         public ViewAllPasswords()
         {
             this.InitializeComponent();
-            EntryRepository entryRepository = new EntryRepository();
-            AddEntryToRepository(entryRepository.Collection);
+            entryRepository = new EntryRepository();
+            //AddEntryToRepository(entryRepository.Collection);
+            //AddDataToRepository(entryRepository.Collection);
 
-            dataLetter = entryRepository.GetGroupsByLetter;
-            cvs.Source = dataLetter;
-
-            this.lvZoomedInPasswords.SelectionChanged -= lvZoomedIn_SelectionChanged;
-            this.lvZoomedInPasswords.SelectedItem = null;
-
-            (this.semanticZoom.ZoomedOutView as ListViewBase).ItemsSource = entryRepository.PasswordHeaders;
-            this.lvZoomedInPasswords.SelectionChanged += lvZoomedIn_SelectionChanged;
-
-            this.semanticZoom.ViewChangeStarted -= semanticZoom_ViewChangeStarted;
-            this.semanticZoom.ViewChangeStarted += semanticZoom_ViewChangeStarted;
+            //dataLetter = entryRepository.GetGroupsByLetter;
+            //cvs.Source = dataLetter;
 
 
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
+
+        private async Task<List<Entry>> AddDataToRepository()
+        {
+            List<Entry> passwords = await App._connection.Table<Entry>().ToListAsync();
+            return passwords;
+        }
+
+
 
         private void semanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
@@ -82,70 +76,6 @@ namespace CompletePasswordManager
                 await md.ShowAsync();
                 this.lvZoomedInPasswords.SelectedItem = null;
             }
-        }
-
-        private void AddEntryToRepository(ObservableCollection<Entry> observableCollection)
-        {
-            observableCollection.Add(new Entry { Name = "9GAG", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "500PX", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "facebook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Outlook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            observableCollection.Add(new Entry { Name = "1GMAIL", Password = "34234234234sdsdf" });
-        }
-
-        private List<Entry> CreateEntries()
-        {
-            List<Entry> entries = new List<Entry>();
-            entries.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Outlook", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Facebook", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Twitter", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Google", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Yahoo", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Microsoft", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "DOna", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "Hotmail", Password = "34234234234sdsdf" });
-            entries.Add(new Entry { Name = "GMAIL", Password = "34234234234sdsdf" });
-            return entries;
         }
 
         private void Grid_Tapped(object sender, TappedRoutedEventArgs e)
@@ -212,9 +142,27 @@ namespace CompletePasswordManager
         /// </summary>
         /// <param name="e">Provides data for navigation methods and event
         /// handlers that cannot cancel the navigation request.</param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             this.navigationHelper.OnNavigatedTo(e);
+            var list = await AddDataToRepository();
+            entryRepository.Collection.AddRange(list);
+            dataLetter = entryRepository.GetGroupsByLetter;
+            lvZoomedInPasswords.DataContext = entryRepository;
+            cvs.Source = dataLetter;
+            listViewBase = this.semanticZoom.ZoomedOutView as ListViewBase;
+            if (listViewBase != null)
+                listViewBase.ItemsSource = entryRepository.PasswordHeaders;
+
+            this.lvZoomedInPasswords.SelectionChanged -= lvZoomedIn_SelectionChanged;
+            this.lvZoomedInPasswords.SelectedItem = null;
+
+            this.lvZoomedInPasswords.SelectionChanged += lvZoomedIn_SelectionChanged;
+
+            this.semanticZoom.ViewChangeStarted -= semanticZoom_ViewChangeStarted;
+            this.semanticZoom.ViewChangeStarted += semanticZoom_ViewChangeStarted;
+
+
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -223,5 +171,27 @@ namespace CompletePasswordManager
         }
 
         #endregion
+
+        private void ListViewItem_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            FrameworkElement senderElement = sender as FrameworkElement;
+            FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
+            flyoutBase.ShowAt(senderElement);
+        }
+
+        private async void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            // entry = e.OriginalSource as Entry;
+
+            MenuFlyoutItem menuFlyoutItem = sender as MenuFlyoutItem;
+            if (menuFlyoutItem != null)
+            {
+                string tag = menuFlyoutItem.Tag.ToString();
+                MessageDialog mdDialog = new MessageDialog("Tapped on item with tag: " + tag);
+                await mdDialog.ShowAsync();
+            }
+
+           
+        }
     }
 }

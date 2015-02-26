@@ -5,23 +5,23 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CompletePasswordManager.Common;
 using CompletePasswordManager.DataSource;
+using CompletePasswordManager.DataStructures;
 
 namespace CompletePasswordManager.Repository
 {
     public class EntryRepository
     {
-        private ObservableCollection<Entry> _collection = new ObservableCollection<Entry>();
-        public ObservableCollection<Entry> Collection
+        private ObservableRangeCollection<Entry> _collection = new ObservableRangeCollection<Entry>();
+        public ObservableRangeCollection<Entry> Collection
         {
             get { return _collection;}
         }
 
         public EntryRepository()
         {
-            
         }
-
 
         private List<GroupInfoList<object>> _groupsByLetter = null;
 
@@ -33,14 +33,15 @@ namespace CompletePasswordManager.Repository
                 {
                     _groupsByLetter = new List<GroupInfoList<object>>();
                     var query = from item in Collection
-                                orderby ((Entry)item).Name
-                                group item by ((Entry)item).Name.ToUpper()[0] into g
-                                select new {GroupName= ( IsNotLetter(g.Key) ? '#' : g.Key), Items = g};
+                        orderby ((Entry) item).Name
+                        group item by ((Entry) item).Name.ToUpper()[0]
+                        into g
+                        select new {GroupName = (IsNotLetter(g.Key) ? '#' : g.Key), Items = g};
                     foreach (var g in query)
                     {
                         GroupInfoList<object> info = new GroupInfoList<object>();
                         info.Key = g.GroupName;
-                        foreach(var item in g.Items)
+                        foreach (var item in g.Items)
                         {
                             info.Add(item);
                         }
@@ -48,6 +49,7 @@ namespace CompletePasswordManager.Repository
                         AddOrUpdateExistent(_groupsByLetter, info);
                     }
                 }
+
                 return _groupsByLetter;
             }
         }
