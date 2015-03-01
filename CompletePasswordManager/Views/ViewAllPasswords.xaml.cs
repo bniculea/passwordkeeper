@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using CompletePasswordManager.Common;
 using CompletePasswordManager.DataModel;
 using CompletePasswordManager.DataSource;
+using CompletePasswordManager.DataStructures;
 using CompletePasswordManager.Repository;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
@@ -24,20 +25,15 @@ namespace CompletePasswordManager.Views
     {
         private NavigationHelper navigationHelper;
         private ObservableDictionary defaultViewModel = new ObservableDictionary();
-        private List<GroupInfoList<object>> dataLetter = null;
+        private ObservableRangeCollection<GroupInfoList<object>> _dataLetter = null;
         private EntryRepository entryRepository;
-        private ListViewBase listViewBase;
+        private ListViewBase _listViewBase;
+        private Border _groupHeaderBorder = null;
+        private int _totalEntries = 0;
         public ViewAllPasswords()
         {
             this.InitializeComponent();
             entryRepository = new EntryRepository();
-            //AddEntryToRepository(entryRepository.Collection);
-            //AddDataToRepository(entryRepository.Collection);
-
-            //dataLetter = entryRepository.GetGroupsByLetter;
-            //cvs.Source = dataLetter;
-
-
             this.navigationHelper = new NavigationHelper(this);
             this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
             this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
@@ -48,9 +44,6 @@ namespace CompletePasswordManager.Views
             List<Entry> passwords = await App._connection.Table<Entry>().ToListAsync();
             return passwords;
         }
-
-
-
         private void semanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
         {
             if (e.SourceItem == null || e.SourceItem.Item == null) return;
@@ -59,7 +52,7 @@ namespace CompletePasswordManager.Views
             {
                 HeaderItem headerItem = (HeaderItem)e.SourceItem.Item;
 
-                var group = dataLetter.Find(d => ((char)d.Key) == headerItem.HeaderName);
+                var group = _dataLetter.First(d => ((char)d.Key) == headerItem.HeaderName);
                 if (group != null)
                 {
                     e.DestinationItem = new SemanticZoomLocation() { Item = group };
@@ -147,12 +140,14 @@ namespace CompletePasswordManager.Views
             this.navigationHelper.OnNavigatedTo(e);
             var list = await AddDataToRepository();
             entryRepository.Collection.AddRange(list);
-            dataLetter = entryRepository.GetGroupsByLetter;
-            lvZoomedInPasswords.DataContext = entryRepository;
-            cvs.Source = dataLetter;
-            listViewBase = this.semanticZoom.ZoomedOutView as ListViewBase;
-            if (listViewBase != null)
-                listViewBase.ItemsSource = entryRepository.PasswordHeaders;
+            _totalEntries = entryRepository.Collection.Count;
+            _dataLetter=  entryRepository.GetGroupsByLetter;
+            cvs.Source = _dataLetter;
+            
+            _listViewBase = this.semanticZoom.ZoomedOutView as ListViewBase;
+            if (_listViewBase != null)
+                _listViewBase.ItemsSource = entryRepository.PasswordHeaders;
+
 
             this.lvZoomedInPasswords.SelectionChanged -= lvZoomedIn_SelectionChanged;
             this.lvZoomedInPasswords.SelectedItem = null;
@@ -177,21 +172,54 @@ namespace CompletePasswordManager.Views
             FrameworkElement senderElement = sender as FrameworkElement;
             FlyoutBase flyoutBase = FlyoutBase.GetAttachedFlyout(senderElement);
             flyoutBase.ShowAt(senderElement);
+
+            //To get the clicked item
+            // var datacontext = (e.OriginalSource as FrameworkElement).DataContext;
         }
 
-        private async void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void FlyoutItemDelete_Click(object sender, RoutedEventArgs e)
         {
-            // entry = e.OriginalSource as Entry;
-
             MenuFlyoutItem menuFlyoutItem = sender as MenuFlyoutItem;
             if (menuFlyoutItem != null)
             {
                 string tag = menuFlyoutItem.Tag.ToString();
-                MessageDialog mdDialog = new MessageDialog("Tapped on item with tag: " + tag);
-                await mdDialog.ShowAsync();
+                Entry entryToDelete = await App._connection.Table<Entry>().Where(k => k.Name.Equals(tag)).FirstAsync();
+                await App._connection.DeleteAsync(entryToDelete);
+                var group = _dataLetter.First(k => k.Contains(entryToDelete));
+                int entryIndexInGroup = group.IndexOf(entryToDelete);
+                group.RemoveAt(entryIndexInGroup);
+                _totalEntries--;
+                if (_groupHeaderBorder != null)
+                {
+                    EnableDisableGroupHeader(_groupHeaderBorder);
+                }
             }
+        }
 
-           
+        private void Border_Loaded(object sender, RoutedEventArgs e)
+        {
+            _groupHeaderBorder = sender as Border;
+            if (_groupHeaderBorder != null)
+            {
+                EnableDisableGroupHeader(_groupHeaderBorder);
+            }
+        }
+
+        private void EnableDisableGroupHeader(Border border)
+        {
+            if (_totalEntries < 10)
+            {
+                border.Width = 0;
+                border.Height = 0;
+                border.Opacity = 0;
+                //Opacity = 0;
+            }
+        }
+
+        private void EditFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            Entry entry = sender as Entry;
+            Frame.Navigate(typeof (EditPage), entry);
         }
     }
 }

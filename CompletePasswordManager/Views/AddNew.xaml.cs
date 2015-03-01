@@ -109,10 +109,21 @@ namespace CompletePasswordManager
             }
             else
             {
-                Entry entry = new Entry() {Name = name, Password = password};
-                await App._connection.InsertAsync(entry);
-                this.txtName.Text = String.Empty;
-                this.txtPassword.Text = String.Empty;
+                var allready = await  App._connection.Table<Entry>().Where(k => k.Name.Equals(name)).FirstOrDefaultAsync();
+                if (allready != null)
+                {
+                    MessageDialog messageDialog = new MessageDialog("There is already an account with this name. Please choose a different one :)");
+                    await messageDialog.ShowAsync();
+                }
+                else
+                {
+                    Entry entry = new Entry() { Name = name, Password = password };
+                    await App._connection.InsertAsync(entry);
+                    this.txtName.Text = String.Empty;
+                    this.txtPassword.Text = String.Empty;
+                }
+
+                
             }
             
         }
