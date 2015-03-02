@@ -216,10 +216,15 @@ namespace CompletePasswordManager.Views
             }
         }
 
-        private void EditFlyoutItem_OnClick(object sender, RoutedEventArgs e)
+        private async void EditFlyoutItem_OnClick(object sender, RoutedEventArgs e)
         {
-            Entry entry = sender as Entry;
-            Frame.Navigate(typeof (EditPage), entry);
+             MenuFlyoutItem menuFlyoutItem = sender as MenuFlyoutItem;
+            if (menuFlyoutItem != null)
+            {
+                string tag = menuFlyoutItem.Tag.ToString();
+                Entry entry = await App._connection.Table<Entry>().Where(k => k.Name.Equals(tag)).FirstAsync();
+                Frame.Navigate(typeof (EditPage), entry);
+            }
         }
     }
 }

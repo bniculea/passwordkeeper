@@ -1,30 +1,32 @@
 ﻿using CompletePasswordManager.Common;
+using CompletePasswordManager.DataModel;
 using System;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using CompletePasswordManager.DataModel;
+using SQLite;
 
 // The Basic Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
-namespace CompletePasswordManager
+namespace CompletePasswordManager.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class AddNew : Page
+    public sealed partial class EditPage : Page
     {
-        private NavigationHelper navigationHelper;
-        private ObservableDictionary defaultViewModel = new ObservableDictionary();
-
-        public AddNew()
+        private NavigationHelper _navigationHelper;
+        private ObservableDictionary _defaultViewModel = new ObservableDictionary();
+        private string _initialName;
+        private string _initialPassword;
+        public EditPage()
         {
             this.InitializeComponent();
 
-            this.navigationHelper = new NavigationHelper(this);
-            this.navigationHelper.LoadState += this.NavigationHelper_LoadState;
-            this.navigationHelper.SaveState += this.NavigationHelper_SaveState;
+            this._navigationHelper = new NavigationHelper(this);
+            this._navigationHelper.LoadState += this.NavigationHelper_LoadState;
+            this._navigationHelper.SaveState += this.NavigationHelper_SaveState;
         }
 
         /// <summary>
@@ -32,7 +34,7 @@ namespace CompletePasswordManager
         /// </summary>
         public NavigationHelper NavigationHelper
         {
-            get { return this.navigationHelper; }
+            get { return this._navigationHelper; }
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace CompletePasswordManager
         /// </summary>
         public ObservableDictionary DefaultViewModel
         {
-            get { return this.defaultViewModel; }
+            get { return this._defaultViewModel; }
         }
 
         /// <summary>
@@ -57,6 +59,14 @@ namespace CompletePasswordManager
         /// session.  The state will be null the first time a page is visited.</param>
         private void NavigationHelper_LoadState(object sender, LoadStateEventArgs e)
         {
+            Entry entry = e.NavigationParameter as Entry;
+            if (entry != null)
+            {
+                this.TxtName.Text = entry.Name;
+                this._initialName = entry.Name;
+                this.TxtPassword.Text = entry.Password;
+                this._initialPassword = entry.Password;
+            }
         }
 
         /// <summary>
@@ -88,17 +98,18 @@ namespace CompletePasswordManager
         /// handlers that cannot cancel the navigation request.</param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            this.navigationHelper.OnNavigatedTo(e);
+            this._navigationHelper.OnNavigatedTo(e);
+           
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            this.navigationHelper.OnNavigatedFrom(e);
+            this._navigationHelper.OnNavigatedFrom(e);
         }
 
         #endregion
 
-        private async void appBarBtnAdd_Click(object sender, RoutedEventArgs e)
+        private async void AppBarBtnSave_OnClick(object sender, RoutedEventArgs e)
         {
             string name = this.TxtName.Text;
             string password = this.TxtPassword.Text;
@@ -107,26 +118,34 @@ namespace CompletePasswordManager
                 MessageDialog messageDialog = new MessageDialog("Name and Password are mandatory", "Input error");
                 await messageDialog.ShowAsync();
             }
+            else if (name.Equals(_initialName) && password.Equals(_initialPassword))
+            {
+                MessageDialog messageDialog = new MessageDialog("Nothing to save. There were no modifications", "Save not fulfilled");
+                await messageDialog.ShowAsync();
+            }
             else
             {
-                var allready = await  App._connection.Table<Entry>().Where(k => k.Name.Equals(name)).FirstOrDefaultAsync();
-                if (allready != null)
+                var allreadyInTheDatabase =
+                    await App._connection.Table<Entry>().Where(k => k.Name.Equals(name)).FirstOrDefaultAsync();
+                if (allreadyInTheDatabase != null && !name.Equals(_initialName))
                 {
-                    MessageDialog messageDialog = new MessageDialog("There is already an account with this name. Please choose a different one :)");
+                    MessageDialog messageDialog =
+                        new MessageDialog("There is already an account with this name. Please choose a different one :)");
                     await messageDialog.ShowAsync();
                 }
                 else
                 {
-                    Entry entry = new Entry() { Name = name, Password = password };
-                    await App._connection.InsertAsync(entry);
+                    string statement = "UPDATE Entry SET Name='" + name + "', Password='" + password + "' WHERE Name='" +
+                                       _initialName + "'";
+                    await App._connection.ExecuteAsync(statement, statement.Length);
                     this.TxtName.Text = String.Empty;
                     this.TxtPassword.Text = String.Empty;
                 }
 
-                
+
             }
-            
         }
 
+       
     }
 }

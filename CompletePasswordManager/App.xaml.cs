@@ -17,7 +17,8 @@ namespace CompletePasswordManager
     /// </summary>
     public sealed partial class App : Application
     {
-        public static SQLiteAsyncConnection _connection = new SQLiteAsyncConnection("passwords.db");
+        public static string DatabaseName = "passwords.db";
+        public static SQLiteAsyncConnection _connection = new SQLiteAsyncConnection(DatabaseName);
         
         private TransitionCollection transitions;
         /// <summary>
